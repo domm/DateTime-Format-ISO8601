@@ -7,7 +7,7 @@ use warnings;
 
 use lib qw( ./lib );
 
-use Test::More tests => 175;
+use Test::More tests => 181;
 
 use DateTime::Format::ISO8601;
 
@@ -606,6 +606,22 @@ my $iso8601 = DateTime::Format::ISO8601->new(
     #YYYY-MM-DDThh:mm:ss+hh:mm 1985-04-12T10:15:30+04:00
     my $dt = $iso8601->parse_datetime( '1985-04-12T10:15:30+04:00' );
     is( $dt->iso8601, '1985-04-12T10:15:30' );
+    is( $dt->time_zone->name, '+0400' );
+}
+
+{
+    #YYYY-MM-DDThh:mm:ss.ss+hh 1985-04-12T10:15:30.5+04
+    my $dt = $iso8601->parse_datetime( '1985-04-12T10:15:30.5+04' );
+    is( $dt->iso8601, '1985-04-12T10:15:30' );
+    is( $dt->nanosecond, 500_000_000 );
+    is( $dt->time_zone->name, '+0400' );
+}
+
+{
+    #YYYYMMDDThhmmss.ss+hh 19850412T101530.5+04
+    my $dt = $iso8601->parse_datetime( '19850412T101530.5+04' );
+    is( $dt->iso8601, '1985-04-12T10:15:30' );
+    is( $dt->nanosecond, 500_000_000 );
     is( $dt->time_zone->name, '+0400' );
 }
 
